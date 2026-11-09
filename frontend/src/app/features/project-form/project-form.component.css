@@ -1,0 +1,72 @@
+.page-head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-block: var(--space-6) var(--space-5);
+}
+
+.code {
+  color: var(--primary);
+}
+
+.title,
+.lead {
+  margin: 0;
+}
+
+.lead {
+  max-width: 72ch;
+  color: var(--muted-foreground);
+}
+
+.status-text {
+  color: var(--muted-foreground);
+}
+
+.error-card {
+  border-color: var(--danger-border);
+}
+
+.form-card {
+  max-width: var(--control-content-max);
+}
+
+.form-error {
+  margin-block-end: var(--space-5);
+  border-inline-start-color: var(--danger-foreground);
+}
+
+/* Fields in a form sit at space-4. */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--grid-min-field), 1fr));
+  gap: var(--space-4);
+}
+
+.span-2 {
+  grid-column: span 2;
+}
+
+.health-readonly {
+  display: flex;
+  align-items: center;
+  min-height: var(--control-md);
+}
+
+.actions-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  margin-block-start: var(--space-6);
+}
+
+/*
+ * The one literal left in the stylesheets. A media query cannot read a custom
+ * property, so --breakpoint-narrow cannot be used here; the value is kept in
+ * step with the variable declared in styles.css.
+ */
+@media (max-width: 640px) {
+  .span-2 {
+    grid-column: span 1;
+  }
+}

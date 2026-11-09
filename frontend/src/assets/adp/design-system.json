@@ -1,0 +1,25 @@
+{
+  "v": 3,
+  "layout": "files",
+  "createdOnFiles": {
+    "v": 1,
+    "at": "2026-11-09T07:06:57Z"
+  },
+  "title": "Harbor Design System",
+  "namespace": "AdpStandard",
+  "libraries": [],
+  "sections": {},
+  "groups": [],
+  "assetGroups": {},
+  "blobs": {},
+  "docs": {
+    "readme": "project/README.md",
+    "sections": []
+  },
+  "lastChange": {
+    "by": "UX Factory",
+    "at": "2026-11-09T07:06:57Z",
+    "via": "UX Factory",
+    "note": "Generated from uxfactory-ui/src/styles/index.css (AgentLens Steel), v1.0.2"
+  }
+}

@@ -1,0 +1,87 @@
+/*
+ * Project overrides. Deliberately small, and loaded last:
+ *
+ *   1. src/styles/tokens.css                   generated from tokens.json
+ *   2. src/assets/adp/components/bundle.css    the design system, unmodified
+ *   3. src/styles.css                          this file
+ *
+ * Every value here is a token. Nothing in the design system folder is edited.
+ */
+
+/*
+ * Responsive grid thresholds.
+ *
+ * These are the one kind of value the design system does not tokenise: it
+ * defines control and content widths but no breakpoints. Rather than repeat bare
+ * pixel literals across component stylesheets, they are named once here and used
+ * as variables, so a layout change is a single edit.
+ */
+:root {
+  --grid-min-kpi: 200px;
+  --grid-min-card: 320px;
+  --grid-min-field: 240px;
+  --grid-min-figure: 120px;
+  --breakpoint-narrow: 640px;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  background: var(--background);
+  color: var(--foreground);
+  font: var(--text-body);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/*
+ * A neutral Badge variant.
+ *
+ * The design system defines four semantic variants (success, warning, danger,
+ * info) and all four carry meaning. "Not started" is a status with no semantic
+ * colour, so it gets the accent fill the system uses for soft chips rather than
+ * borrowing a colour that would imply something.
+ */
+.adp-standard-badge-neutral {
+  background: var(--accent);
+  color: var(--accent-foreground);
+  border-color: var(--border-subtle);
+}
+
+/*
+ * bundle.css styles the invalid state for .adp-standard-input only. Selects and
+ * textareas take the same treatment so an invalid field looks invalid whatever
+ * control it uses.
+ */
+.adp-standard-select[aria-invalid='true'],
+.adp-standard-textarea[aria-invalid='true'] {
+  border-color: var(--danger-foreground);
+}
+
+/*
+ * An error replaces the hint in the same slot, so the layout does not shift when
+ * a message appears.
+ */
+.adp-standard-hint.is-error {
+  color: var(--danger-foreground);
+}
+
+/*
+ * A link styled as a button should not also be underlined; bundle.css styles the
+ * button but leaves an anchor's default decoration in place.
+ */
+a.adp-standard-btn {
+  text-decoration: none;
+}
+
+/* Numbers align right so magnitudes can be compared down a column. */
+.numeric {
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+}

@@ -1,0 +1,382 @@
+@if (portfolioState() === 'error') {
+  <div class="adp-standard-card error-card" role="alert">
+    <h3 class="adp-standard-card-title">Could not load this portfolio</h3>
+    <p class="adp-standard-card-body">{{ portfolioError() }}</p>
+    <a class="adp-standard-btn adp-standard-btn-outline back" routerLink="/">
+      Back to dashboard
+    </a>
+  </div>
+} @else {
+  <header class="page-head">
+    <a class="caption breadcrumb" routerLink="/">&larr; All portfolios</a>
+
+    @if (portfolio(); as current) {
+      <span class="eyebrow code">{{ current.code }}</span>
+      <h1 class="h1 title">{{ current.name }}</h1>
+      <p class="body owner">{{ current.owner }}</p>
+    } @else {
+      <h1 class="h1 title">Loading...</h1>
+    }
+  </header>
+
+  <!--
+    Tabs are driven by aria-selected, not a class: bundle.css styles the active
+    tab with .adp-standard-tab[aria-selected='true'], so an .active class would
+    produce no visual change at all.
+  -->
+  <div class="adp-standard-tabs" role="tablist" aria-label="Portfolio sections">
+    <button
+      type="button"
+      class="adp-standard-tab"
+      role="tab"
+      id="tab-projects"
+      aria-controls="panel-projects"
+      [attr.aria-selected]="onProjectsTab()"
+      (click)="selectTab('projects')"
+    >
+      Projects
+    </button>
+    <button
+      type="button"
+      class="adp-standard-tab"
+      role="tab"
+      id="tab-overview"
+      aria-controls="panel-overview"
+      [attr.aria-selected]="!onProjectsTab()"
+      (click)="selectTab('overview')"
+    >
+      Overview
+    </button>
+  </div>
+
+  @if (onProjectsTab()) {
+    <section id="panel-projects" role="tabpanel" aria-labelledby="tab-projects" class="panel">
+      <!-- Every control has a visible label; placeholders are examples, not labels. -->
+      <form class="toolbar" (submit)="$event.preventDefault()" role="search">
+        <div class="adp-standard-field search-field">
+          <label class="adp-standard-label" for="search">Search</label>
+          <input
+            class="adp-standard-input"
+            id="search"
+            type="search"
+            name="search"
+            placeholder="PRJ-001 or Customer Portal"
+            [value]="searchText()"
+            (input)="onSearchInput($any($event.target).value)"
+          />
+          <span class="adp-standard-hint">Matches project code or name.</span>
+        </div>
+
+        <div class="adp-standard-field">
+          <label class="adp-standard-label" for="status">Status</label>
+          <select
+            class="adp-standard-select"
+            id="status"
+            name="status"
+            [value]="status()"
+            (change)="onStatusChange($any($event.target).value)"
+          >
+            <option value="">All statuses</option>
+            @for (option of statuses; track option) {
+              <option [value]="option">{{ statusLabels[option] }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="adp-standard-field">
+          <label class="adp-standard-label" for="health">Health</label>
+          <select
+            class="adp-standard-select"
+            id="health"
+            name="health"
+            [value]="health()"
+            (change)="onHealthChange($any($event.target).value)"
+          >
+            <option value="">All health</option>
+            @for (option of healthValues; track option) {
+              <option [value]="option">{{ option }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="toolbar-actions">
+          <button
+            type="button"
+            class="adp-standard-btn adp-standard-btn-ghost"
+            [disabled]="!hasActiveFilters()"
+            (click)="clearFilters()"
+          >
+            Clear filters
+          </button>
+
+          <a
+            class="adp-standard-btn adp-standard-btn-primary"
+            [routerLink]="['/portfolios', portfolioId(), 'projects', 'new']"
+          >
+            Add project
+          </a>
+        </div>
+      </form>
+
+      @switch (projectsState()) {
+        @case ('loading') {
+          <p class="body status-text" role="status">Loading projects...</p>
+        }
+
+        @case ('error') {
+          <div class="adp-standard-card error-card" role="alert">
+            <h3 class="adp-standard-card-title">Could not load projects</h3>
+            <p class="adp-standard-card-body">{{ projectsError() }}</p>
+            <div class="error-actions">
+              <button
+                type="button"
+                class="adp-standard-btn adp-standard-btn-primary"
+                (click)="reloadProjects()"
+              >
+                Retry
+              </button>
+            </div>
+          </div>
+        }
+
+        @case ('ready') {
+          @if (projects().length === 0) {
+            <div class="adp-standard-card empty">
+              <h3 class="adp-standard-card-title">
+                @if (hasActiveFilters()) {
+                  No projects match these filters
+                } @else {
+                  No projects in this portfolio yet
+                }
+              </h3>
+              <p class="adp-standard-card-body">
+                @if (hasActiveFilters()) {
+                  Try a different search term, or clear the filters to see everything.
+                } @else {
+                  Add the first project to start tracking budget and health.
+                }
+              </p>
+              @if (hasActiveFilters()) {
+                <div class="error-actions">
+                  <button
+                    type="button"
+                    class="adp-standard-btn adp-standard-btn-outline"
+                    (click)="clearFilters()"
+                  >
+                    Clear filters
+                  </button>
+                </div>
+              }
+            </div>
+          } @else {
+            <div class="table-scroll">
+              <table class="adp-standard-table">
+                <caption class="caption table-caption">
+                  Showing {{ firstRowOnPage() }}-{{ lastRowOnPage() }} of
+                  {{ totalCount() }} projects. Health is calculated by the server.
+                </caption>
+                <thead>
+                  <tr>
+                    <th scope="col" [attr.aria-sort]="ariaSortFor('code')">
+                      <button type="button" class="sort" (click)="toggleSort('code')">Code</button>
+                    </th>
+                    <th scope="col" [attr.aria-sort]="ariaSortFor('name')">
+                      <button type="button" class="sort" (click)="toggleSort('name')">Name</button>
+                    </th>
+                    <th scope="col" [attr.aria-sort]="ariaSortFor('owner')">
+                      <button type="button" class="sort" (click)="toggleSort('owner')">Owner</button>
+                    </th>
+                    <th scope="col" [attr.aria-sort]="ariaSortFor('status')">
+                      <button type="button" class="sort" (click)="toggleSort('status')">Status</button>
+                    </th>
+                    <th scope="col" [attr.aria-sort]="ariaSortFor('health')">
+                      <button type="button" class="sort" (click)="toggleSort('health')">Health</button>
+                    </th>
+                    <th scope="col" [attr.aria-sort]="ariaSortFor('endDate')">
+                      <button type="button" class="sort" (click)="toggleSort('endDate')">End date</button>
+                    </th>
+                    <th scope="col" class="numeric" [attr.aria-sort]="ariaSortFor('budget')">
+                      <button type="button" class="sort" (click)="toggleSort('budget')">Budget</button>
+                    </th>
+                    <th scope="col" class="numeric" [attr.aria-sort]="ariaSortFor('actualCost')">
+                      <button type="button" class="sort" (click)="toggleSort('actualCost')">Actual cost</button>
+                    </th>
+                    <th scope="col" class="numeric" [attr.aria-sort]="ariaSortFor('progress')">
+                      <button type="button" class="sort" (click)="toggleSort('progress')">Progress</button>
+                    </th>
+                    <th scope="col"><span class="visually-hidden">Actions</span></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (project of projects(); track project.id) {
+                    <tr>
+                      <td>{{ project.code }}</td>
+                      <td>{{ project.name }}</td>
+                      <td>{{ project.owner }}</td>
+                      <td><app-status-badge [status]="project.status" /></td>
+                      <td><app-health-badge [health]="project.health" /></td>
+                      <td>{{ project.endDate | appDate }}</td>
+                      <td class="numeric">{{ project.budget | aed }}</td>
+                      <td class="numeric">
+                        {{ project.actualCost | aed }}
+                        <span class="caption share">
+                          {{ project.actualCost | spendShare: project.budget }}
+                        </span>
+                      </td>
+                      <td class="numeric">{{ project.progress }}%</td>
+                      <td>
+                        <div class="row-actions">
+                          <a
+                            class="adp-standard-btn adp-standard-btn-outline btn-sm"
+                            [routerLink]="['/projects', project.id, 'edit']"
+                          >
+                            Edit
+                          </a>
+                          <button
+                            type="button"
+                            class="adp-standard-btn adp-standard-btn-ghost btn-sm"
+                            (click)="askToDelete(project)"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+
+            <nav class="pager" aria-label="Projects pagination">
+              <div class="adp-standard-field page-size">
+                <label class="adp-standard-label" for="pageSize">Rows per page</label>
+                <select
+                  class="adp-standard-select"
+                  id="pageSize"
+                  [value]="currentPageSize()"
+                  (change)="onPageSizeChange($any($event.target).value)"
+                >
+                  <option value="5">5</option>
+                  <option value="10">10</option>
+                  <option value="25">25</option>
+                  <option value="50">50</option>
+                </select>
+              </div>
+
+              <div class="pager-controls">
+                <button
+                  type="button"
+                  class="adp-standard-btn adp-standard-btn-outline"
+                  [disabled]="currentPage() <= 1"
+                  (click)="goToPage(currentPage() - 1)"
+                >
+                  Previous
+                </button>
+                <span class="caption page-label" aria-live="polite">
+                  Page {{ currentPage() }} of {{ pageCount() }}
+                </span>
+                <button
+                  type="button"
+                  class="adp-standard-btn adp-standard-btn-outline"
+                  [disabled]="currentPage() >= pageCount()"
+                  (click)="goToPage(currentPage() + 1)"
+                >
+                  Next
+                </button>
+              </div>
+            </nav>
+          }
+        }
+      }
+    </section>
+  } @else {
+    <section id="panel-overview" role="tabpanel" aria-labelledby="tab-overview" class="panel">
+      @if (portfolio(); as current) {
+        <div class="overview-grid">
+          <div class="adp-standard-card">
+            <h3 class="adp-standard-card-title">Description</h3>
+            <p class="adp-standard-card-body">
+              {{ current.description || 'No description was provided for this portfolio.' }}
+            </p>
+          </div>
+
+          <div class="adp-standard-card">
+            <h3 class="adp-standard-card-title">Summary</h3>
+            <dl class="summary">
+              <dt class="caption">Projects</dt>
+              <dd class="title">{{ current.projectCount }}</dd>
+
+              <dt class="caption">Total budget</dt>
+              <dd class="title">{{ current.totalBudget | aed }}</dd>
+
+              <dt class="caption">Total actual cost</dt>
+              <dd class="title">
+                {{ current.totalActualCost | aed }}
+                <span class="caption share">
+                  ({{ current.totalActualCost | spendShare: current.totalBudget }} of budget)
+                </span>
+              </dd>
+
+              <dt class="caption">Health</dt>
+              <dd>
+                <div class="badges">
+                  <span class="adp-standard-badge adp-standard-badge-success">
+                    {{ current.healthCounts.green }} Green
+                  </span>
+                  <span class="adp-standard-badge adp-standard-badge-warning">
+                    {{ current.healthCounts.amber }} Amber
+                  </span>
+                  <span class="adp-standard-badge adp-standard-badge-danger">
+                    {{ current.healthCounts.red }} Red
+                  </span>
+                </div>
+              </dd>
+            </dl>
+          </div>
+        </div>
+      } @else {
+        <p class="body status-text" role="status">Loading overview...</p>
+      }
+    </section>
+  }
+}
+
+@if (pendingDelete(); as project) {
+  <div class="adp-standard-scrim" (click)="cancelDelete()"></div>
+  <div class="dialog-layer">
+    <div
+      class="adp-standard-dialog"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="delete-title"
+    >
+      <h2 class="h2 dialog-title" id="delete-title">Delete this project?</h2>
+      <p class="body dialog-body">
+        {{ project.code }} &mdash; {{ project.name }} will be removed. This cannot be undone.
+      </p>
+
+      @if (deleteError()) {
+        <p class="adp-standard-hint is-error" role="alert">{{ deleteError() }}</p>
+      }
+
+      <div class="dialog-actions">
+        <button
+          type="button"
+          class="adp-standard-btn adp-standard-btn-ghost"
+          [disabled]="deleting()"
+          (click)="cancelDelete()"
+        >
+          Cancel
+        </button>
+        <button
+          type="button"
+          class="adp-standard-btn adp-standard-btn-danger"
+          [disabled]="deleting()"
+          (click)="confirmDelete()"
+        >
+          {{ deleting() ? 'Deleting...' : 'Delete project' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

@@ -1,0 +1,56 @@
+<app-page-header
+  eyebrow="Strategic Delivery Office"
+  title="Portfolio dashboard"
+  lead="Budget, spend and delivery health across every portfolio. Health is calculated by the server each time a project is read."
+/>
+
+@switch (state()) {
+  @case ('loading') {
+    <p class="body status-text" role="status">Loading portfolios...</p>
+  }
+
+  @case ('error') {
+    <div class="adp-standard-card error-card" role="alert">
+      <h3 class="adp-standard-card-title">Could not load the dashboard</h3>
+      <p class="adp-standard-card-body">{{ errorMessage() }}</p>
+      <div class="error-actions">
+        <button type="button" class="adp-standard-btn adp-standard-btn-primary" (click)="load()">
+          Retry
+        </button>
+      </div>
+    </div>
+  }
+
+  @case ('ready') {
+    @if (portfolios().length === 0) {
+      <div class="adp-standard-card">
+        <h3 class="adp-standard-card-title">No portfolios yet</h3>
+        <p class="adp-standard-card-body">
+          Once a portfolio is created it will appear here with its budget and health.
+        </p>
+      </div>
+    } @else {
+      <section class="kpis" aria-label="Portfolio totals">
+        <app-kpi-card label="Portfolios" [value]="portfolios().length" />
+        <app-kpi-card label="Projects" [value]="totalProjects()" />
+        <app-kpi-card label="Total budget" [value]="totalBudget() | aed" />
+        <app-kpi-card label="Total actual cost" [value]="totalActualCost() | aed" />
+        <app-kpi-card
+          label="Projects at risk"
+          [value]="projectsAtRisk()"
+          [hint]="projectsAtRiskShare()"
+        />
+      </section>
+
+      <section class="portfolios" aria-label="Portfolios">
+        <h2 class="h2 section-title">Portfolios</h2>
+
+        <div class="card-grid">
+          @for (portfolio of portfolios(); track portfolio.id) {
+            <app-portfolio-card [portfolio]="portfolio" />
+          }
+        </div>
+      </section>
+    }
+  }
+}

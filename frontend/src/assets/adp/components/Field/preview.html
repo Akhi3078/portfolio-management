@@ -1,0 +1,24 @@
+<!-- @dsCard group="Forms" height=128 -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Field — Harbor Design System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>html, body { margin: 0; } body { background: var(--background); }</style>
+</head>
+<body>
+<div class="adp-standard-root" style="padding: 16px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center;">
+<div class="adp-standard-field" style="width: 280px">
+  <label class="adp-standard-label" for="adp-standard-vessel">Vessel name</label>
+  <input class="adp-standard-input" id="adp-standard-vessel" value="MSC Aurora" />
+  <span class="adp-standard-hint">As registered with the port authority.</span>
+</div>
+<div class="adp-standard-field" style="width: 280px">
+  <label class="adp-standard-label" for="adp-standard-eta">Estimated arrival</label>
+  <input class="adp-standard-input" id="adp-standard-eta" value="31/02/2026" aria-invalid="true" aria-describedby="adp-standard-eta-error" />
+  <span class="adp-standard-hint" id="adp-standard-eta-error" style="color: var(--danger-foreground)">Enter a date as DD/MM/YYYY.</span>
+</div>
+</div>
+</body>
+</html>

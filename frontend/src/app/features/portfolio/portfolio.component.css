@@ -1,0 +1,235 @@
+.page-head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-block: var(--space-6) var(--space-5);
+}
+
+.breadcrumb {
+  color: var(--primary);
+  text-decoration: none;
+  align-self: flex-start;
+  border-radius: var(--radius-sm);
+}
+
+.breadcrumb:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.code {
+  color: var(--primary);
+}
+
+.title,
+.owner {
+  margin: 0;
+}
+
+.owner {
+  color: var(--muted-foreground);
+}
+
+.panel {
+  padding-block-start: var(--space-5);
+}
+
+/* Toolbar: filters on the reading side, actions on the far side. */
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--space-4);
+  margin-block-end: var(--space-5);
+}
+
+.search-field {
+  flex: 1 1 var(--control-rail);
+  min-width: var(--grid-min-field);
+}
+
+.toolbar-actions {
+  display: flex;
+  gap: var(--space-2);
+  margin-inline-start: auto;
+  padding-block-start: var(--space-5);
+}
+
+.status-text {
+  color: var(--muted-foreground);
+}
+
+.error-card {
+  border-color: var(--danger-border);
+}
+
+.error-actions {
+  margin-block-start: var(--space-4);
+}
+
+.back {
+  margin-block-start: var(--space-4);
+}
+
+.empty {
+  text-align: center;
+}
+
+.table-scroll {
+  overflow-x: auto;
+  background: var(--surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+
+.table-caption {
+  caption-side: bottom;
+  padding: var(--space-3);
+  color: var(--muted-foreground);
+  text-align: start;
+}
+
+/*
+ * Sortable headers are real buttons so they are keyboard-reachable; they inherit
+ * the header's type rather than introducing one of their own.
+ */
+.sort {
+  all: unset;
+  font: inherit;
+  color: inherit;
+  text-transform: inherit;
+  letter-spacing: inherit;
+  cursor: pointer;
+  border-radius: var(--radius-xs);
+}
+
+.sort:hover {
+  color: var(--primary);
+}
+
+.sort:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+th[aria-sort='ascending'] .sort::after {
+  content: ' \2191';
+  color: var(--primary);
+}
+
+th[aria-sort='descending'] .sort::after {
+  content: ' \2193';
+  color: var(--primary);
+}
+
+.share {
+  display: block;
+  color: var(--muted-foreground);
+}
+
+.row-actions {
+  display: flex;
+  gap: var(--space-2);
+  justify-content: flex-end;
+}
+
+.btn-sm {
+  min-height: var(--control-sm);
+  padding-inline: var(--space-3);
+  text-decoration: none;
+}
+
+.pager {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-block-start: var(--space-4);
+}
+
+.page-size {
+  max-width: var(--control-rail);
+}
+
+.pager-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.page-label {
+  color: var(--muted-foreground);
+}
+
+.overview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--grid-min-card), 1fr));
+  gap: var(--space-5);
+}
+
+.summary {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-2) var(--space-5);
+  margin: var(--space-4) 0 0;
+  align-items: baseline;
+}
+
+.summary dt {
+  color: var(--muted-foreground);
+}
+
+.summary dd {
+  margin: 0;
+  color: var(--foreground);
+}
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+/* Dialog: the scrim is fixed by the design system; this centres the panel over it. */
+.dialog-layer {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-5);
+  pointer-events: none;
+}
+
+.dialog-layer > .adp-standard-dialog {
+  pointer-events: auto;
+}
+
+.dialog-title {
+  margin: 0;
+}
+
+.dialog-body {
+  margin: var(--space-3) 0 0;
+  color: var(--muted-foreground);
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  margin-block-start: var(--space-5);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: calc(var(--space-1) * -1);
+  padding: var(--space-0);
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

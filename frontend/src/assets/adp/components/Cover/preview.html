@@ -1,0 +1,29 @@
+<!-- @dsCard height=288 -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Harbor Design System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; height: 100%; }
+  body { background: var(--background); color: var(--foreground); font-family: var(--font-sans); overflow: hidden; }
+  .cover { position: relative; height: 288px; padding: var(--space-6); box-sizing: border-box; }
+  .eyebrow { margin: 0; color: var(--muted-foreground); font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
+  .name { margin: var(--space-2) 0 0; font-size: 56px; line-height: 1; font-weight: 700; letter-spacing: -0.01em; }
+  .lead { max-width: 480px; margin: var(--space-3) 0 0; color: var(--muted-foreground); font-size: 15px; line-height: 1.5; }
+  .swatches { position: absolute; right: var(--space-6); bottom: var(--space-6); display: flex; gap: var(--space-2); }
+  .swatches i { display: block; width: 48px; height: 48px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); }
+  .cta { position: absolute; left: var(--space-6); bottom: var(--space-6); display: inline-block; padding: 10px 16px; border-radius: var(--radius-md); background: var(--primary); color: var(--primary-foreground); font-size: 14px; font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="cover">
+  <p class="eyebrow">Group standard · v1.0.2</p>
+  <h1 class="name">Harbor Design System</h1>
+  <p class="lead">A clear, familiar foundation for enterprise portals and everyday operational workflows.</p>
+  <span class="cta">Explore services</span>
+  <div class="swatches" aria-hidden="true"><i style="background: #16425B"></i><i style="background: #2F6690"></i><i style="background: #7FBCE0"></i><i style="background: #F4F6F5"></i></div>
+</div>
+</body>
+</html>

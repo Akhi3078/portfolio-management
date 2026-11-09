@@ -1,0 +1,33 @@
+.status-text {
+  color: var(--muted-foreground);
+}
+
+.error-card {
+  border-color: var(--danger-border);
+}
+
+.error-actions {
+  margin-block-start: var(--space-4);
+}
+
+/* Lists of cards sit in a grid at space-5, per the Card guidelines. */
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--grid-min-kpi), 1fr));
+  gap: var(--space-5);
+}
+
+.portfolios {
+  margin-block-start: var(--space-6);
+}
+
+.section-title {
+  margin: 0 0 var(--space-4);
+  color: var(--foreground);
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--grid-min-card), 1fr));
+  gap: var(--space-5);
+}

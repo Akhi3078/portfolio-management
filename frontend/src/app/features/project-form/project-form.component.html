@@ -1,0 +1,252 @@
+@if (state() === 'error') {
+  <div class="adp-standard-card error-card" role="alert">
+    <h3 class="adp-standard-card-title">Could not load this project</h3>
+    <p class="adp-standard-card-body">{{ loadError() }}</p>
+    <div class="actions-row">
+      <button
+        type="button"
+        class="adp-standard-btn adp-standard-btn-outline"
+        (click)="returnToPortfolio()"
+      >
+        Back
+      </button>
+    </div>
+  </div>
+} @else {
+  <header class="page-head">
+    <span class="eyebrow code">
+      {{ mode() === 'edit' ? 'Edit project' : 'New project' }}
+    </span>
+    <h1 class="h1 title">
+      {{ mode() === 'edit' ? existing()?.code ?? 'Project' : 'Add a project' }}
+    </h1>
+    <p class="body lead">
+      Health is calculated by the server from budget, dates, status and progress.
+      It cannot be entered here.
+    </p>
+  </header>
+
+  @if (state() === 'loading') {
+    <p class="body status-text" role="status">Loading project...</p>
+  } @else {
+    <form class="adp-standard-card form-card" [formGroup]="form" (ngSubmit)="save()" novalidate>
+      @if (formError()) {
+        <div class="adp-standard-toast form-error" role="alert">
+          <span class="body">{{ formError() }}</span>
+        </div>
+      }
+
+      <div class="grid">
+        <!--
+          Each field follows the Field pattern: a label, the control, then one slot
+          that holds either the hint or the error. aria-invalid drives the invalid
+          border, because bundle.css styles [aria-invalid='true'] and would ignore
+          an .error class.
+        -->
+        <div class="adp-standard-field">
+          <label class="adp-standard-label" for="code">Project code</label>
+          <input
+            class="adp-standard-input"
+            id="code"
+            formControlName="code"
+            placeholder="PRJ-123"
+            autocomplete="off"
+            [attr.aria-invalid]="hasError('code')"
+            [attr.aria-describedby]="'code-message'"
+            (input)="clearServerError('code')"
+          />
+          <span class="adp-standard-hint" id="code-message" [class.is-error]="hasError('code')">
+            {{ errorFor('code') ?? 'PRJ- followed by exactly 3 digits. Must be unique.' }}
+          </span>
+        </div>
+
+        <div class="adp-standard-field span-2">
+          <label class="adp-standard-label" for="name">Project name</label>
+          <input
+            class="adp-standard-input"
+            id="name"
+            formControlName="name"
+            placeholder="Customer Portal Revamp"
+            [attr.aria-invalid]="hasError('name')"
+            [attr.aria-describedby]="'name-message'"
+            (input)="clearServerError('name')"
+          />
+          <span class="adp-standard-hint" id="name-message" [class.is-error]="hasError('name')">
+            {{ errorFor('name') ?? 'Between 3 and 150 characters.' }}
+          </span>
+        </div>
+
+        <div class="adp-standard-field">
+          <label class="adp-standard-label" for="owner">Owner</label>
+          <input
+            class="adp-standard-input"
+            id="owner"
+            formControlName="owner"
+            placeholder="Aisha Khan"
+            [attr.aria-invalid]="hasError('owner')"
+            [attr.aria-describedby]="'owner-message'"
+            (input)="clearServerError('owner')"
+          />
+          <span class="adp-standard-hint" id="owner-message" [class.is-error]="hasError('owner')">
+            {{ errorFor('owner') ?? 'The person accountable for delivery.' }}
+          </span>
+        </div>
+
+        <div class="adp-standard-field">
+          <label class="adp-standard-label" for="status">Status</label>
+          <select
+            class="adp-standard-select"
+            id="status"
+            formControlName="status"
+            [attr.aria-invalid]="hasError('status')"
+            [attr.aria-describedby]="'status-message'"
+            (change)="clearServerError('status')"
+          >
+            @for (option of statuses; track option) {
+              <option [value]="option">{{ statusLabels[option] }}</option>
+            }
+          </select>
+          <span class="adp-standard-hint" id="status-message" [class.is-error]="hasError('status')">
+            {{ errorFor('status') ?? 'Progress must be 100% when status is Completed.' }}
+          </span>
+        </div>
+
+        <div class="adp-standard-field">
+          <label class="adp-standard-label" for="startDate">Start date</label>
+          <input
+            class="adp-standard-input"
+            id="startDate"
+            type="date"
+            formControlName="startDate"
+            [attr.aria-invalid]="hasError('startDate')"
+            [attr.aria-describedby]="'startDate-message'"
+            (change)="clearServerError('startDate')"
+          />
+          <span
+            class="adp-standard-hint"
+            id="startDate-message"
+            [class.is-error]="hasError('startDate')"
+          >
+            {{ errorFor('startDate') ?? 'Planned start.' }}
+          </span>
+        </div>
+
+        <div class="adp-standard-field">
+          <label class="adp-standard-label" for="endDate">End date</label>
+          <input
+            class="adp-standard-input"
+            id="endDate"
+            type="date"
+            formControlName="endDate"
+            [attr.aria-invalid]="hasError('endDate')"
+            [attr.aria-describedby]="'endDate-message'"
+            (change)="clearServerError('endDate')"
+          />
+          <span
+            class="adp-standard-hint"
+            id="endDate-message"
+            [class.is-error]="hasError('endDate')"
+          >
+            {{ errorFor('endDate') ?? 'Must be on or after the start date.' }}
+          </span>
+        </div>
+
+        <div class="adp-standard-field">
+          <label class="adp-standard-label" for="budget">Budget (AED)</label>
+          <input
+            class="adp-standard-input"
+            id="budget"
+            type="number"
+            min="0"
+            step="1000"
+            formControlName="budget"
+            [attr.aria-invalid]="hasError('budget')"
+            [attr.aria-describedby]="'budget-message'"
+            (input)="clearServerError('budget')"
+          />
+          <span class="adp-standard-hint" id="budget-message" [class.is-error]="hasError('budget')">
+            {{ errorFor('budget') ?? 'Must be greater than 0.' }}
+          </span>
+        </div>
+
+        <div class="adp-standard-field">
+          <label class="adp-standard-label" for="actualCost">Actual cost (AED)</label>
+          <input
+            class="adp-standard-input"
+            id="actualCost"
+            type="number"
+            min="0"
+            step="1000"
+            formControlName="actualCost"
+            [attr.aria-invalid]="hasError('actualCost')"
+            [attr.aria-describedby]="'actualCost-message'"
+            (input)="clearServerError('actualCost')"
+          />
+          <span
+            class="adp-standard-hint"
+            id="actualCost-message"
+            [class.is-error]="hasError('actualCost')"
+          >
+            {{ errorFor('actualCost') ?? 'Spent to date. 0 or more.' }}
+          </span>
+        </div>
+
+        <div class="adp-standard-field">
+          <label class="adp-standard-label" for="progress">Progress (%)</label>
+          <input
+            class="adp-standard-input"
+            id="progress"
+            type="number"
+            min="0"
+            max="100"
+            step="5"
+            formControlName="progress"
+            [attr.aria-invalid]="hasError('progress')"
+            [attr.aria-describedby]="'progress-message'"
+            (input)="clearServerError('progress')"
+          />
+          <span
+            class="adp-standard-hint"
+            id="progress-message"
+            [class.is-error]="hasError('progress')"
+          >
+            {{ errorFor('progress') ?? 'Between 0 and 100.' }}
+          </span>
+        </div>
+
+        @if (existing(); as project) {
+          <!-- Read-only, to make visible that health is derived rather than entered. -->
+          <div class="adp-standard-field">
+            <span class="adp-standard-label" id="health-label">Health (calculated)</span>
+            <div class="health-readonly" aria-labelledby="health-label">
+              <app-health-badge [health]="project.health" />
+            </div>
+            <span class="adp-standard-hint">
+              Server-calculated. Expected progress today is
+              {{ project.expectedProgress }}%.
+            </span>
+          </div>
+        }
+      </div>
+
+      <!-- One primary button per view; the dismissal is ghost. -->
+      <div class="actions-row">
+        <button
+          type="button"
+          class="adp-standard-btn adp-standard-btn-ghost"
+          [disabled]="saving()"
+          (click)="returnToPortfolio()"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          class="adp-standard-btn adp-standard-btn-primary"
+          [disabled]="saving()"
+        >
+          {{ saving() ? 'Saving...' : mode() === 'edit' ? 'Save changes' : 'Create project' }}
+        </button>
+      </div>
+    </form>
+  }
+}
